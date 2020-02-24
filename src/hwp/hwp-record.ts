@@ -1,3 +1,57 @@
+
+// Record
+var HWPRecord = function HWPRecord(){};
+
+HWPRecord.prototype.toString = function(){
+	var toStr = function toStr(obj, t){
+		var s = t + obj.name + ' | ' + bufferToString(obj.data);
+		if(obj.children) obj.children.forEach(function(o){
+			s += '\n'+toStr(o, t+'\t');
+		});
+		return s;
+	};
+	return toStr(this, '');
+};
+
+for(name in root.record){
+	root.record[name].prototype = new HWPRecord();
+}
+
+var HWPRawRecord = function HWPRawRecord(offset, buffer){
+	var header = buffer.readUInt32LE(offset); offset += 4;
+	this.tag = header&0x3FF;
+	this.level = (header>>10)&0x3FF;
+	this.size = header>>20;
+	if(this.size == 4095){
+		this.size = buffer.readUInt32LE(offset);
+		offset += 4;
+	}
+	this.data = buffer.slice(offset, offset + this.size);
+	this._offset = offset + this.size;
+};
+
+HWPRawRecord.prototype.resolve = function(parent){
+	var tag = root.tag.table[this.tag];
+	if(!tag){
+		console.warn("Warning [%s]: unknown tag %d", parent && parent.name || "(ROOT)", this.tag);
+		this.children = [];
+		return this;
+	}
+	if(!root.record[tag]) throw new Error("Non-existing record type: "+tag);
+
+	var obj;
+	try{
+		obj = new root.record[tag](this.data);
+	}catch(e){
+		console.error("Tag: %s", tag);
+		console.error("Data: %s", bufferToString(this.data));
+		throw e;
+	}
+	obj.children = [];
+	return obj;
+};
+
+
 root.record.DOCUMENT_PROPERTIES = function Record_DOCUMENT_PROPERTIES(data){
 	var tmp,attr=this.attr={};this.data=data;this.name="DOCUMENT_PROPERTIES";
 	attr.SecCnt=this.data.readUInt16LE(0);

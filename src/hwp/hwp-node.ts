@@ -1,15 +1,201 @@
-interface INode {
-	name: string;
-	attr: object;
-	children: INode[];
+function escapeHTML(s: string){
+	s += '';
+	for(var ps=false,h='',c,i=0; i<s.length; i++){
+		c = s.charCodeAt(i);
+		if(
+			(c<32||c>127) // ASCII
+			&&(c<12593||c>12643) // ㄱ-ㅎㅏ-ㅣ
+			&&(c<44032||c>55203) // 가-힣
+		) h += '&#'+c+';';
+		else if(s[i]==' '&&ps) h += '&#32;';
+		else if(s[i]=='"') h += '&quot;';
+		else if(s[i]=='&') h += '&amp;';
+		else if(s[i]=='<') h += '&lt;';
+		else if(s[i]=='>') h += '&gt;';
+		else h += s[i];
+		
+		ps = s[i] == ' ';
+	}
+	return h;
+};
+function _setAttr(t: HWPNode, n: string, v: any){
+	if(t.attr[n] === undefined) console.warn("Warning [%s]: unexpected attr %s", t.name, n);
+	t.attr[n] = v;
+};
+
+class HWPNode {
+	public name:string;
+	public value: any = null;
+	public offset = 0;
+	public attr: object;
+	public children: HWPNode[];
+	public encoding?: string;
+
+	constructor(name: string, attr: object, encoding?: string) {
+		this.name = name;
+		this.attr = attr;
+		this.children = [];
+		this.encoding = encoding;
+	}
+
+
+	
+	public getEncodedValue(toHML: (obj: HWPNode, tab: string, nl: string) => string) {
+		if(this.value == null) return null;
+		switch(this.encoding){
+			case 'base64':
+				return escapeHTML((new Buffer(this.value, 'utf16le')).toString('base64'));
+			default:
+				if(this.children.length > 0){
+					var li = 0, v = "";
+					this.children.forEach((elem) => {
+						v += escapeHTML(this.value.slice(li, elem.offset));
+						v += toHML(elem, '', '');
+						li = elem.offset;
+					}, this);
+					return v + escapeHTML(this.value.slice(li));
+				}
+		}
+		return escapeHTML(this.value);
+	}
+	
+	public toHML(verbose: boolean){
+		const toHML = (obj: HWPNode, tab: string, nl: string) => {
+			var i, e, hml = "";
+			var ov = obj.getEncodedValue(toHML);
+			if(obj.name == 'HWPML')
+				hml += tab + "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n";
+			hml += tab + '<' + obj.name;
+			for(e in obj.attr){
+				// undefined? undefined+null?
+				if(obj.attr[e] != undefined) hml += ' '+e+'="'+escapeHTML(obj.attr[e])+'"';
+			}
+			if(obj.children && obj.children.length > 0){
+				hml += '>'+nl;
+				for(i=0;i<obj.children.length;i++){
+					hml += toHML(obj.children[i], verbose? tab+'  ': '', nl);
+				}
+				if(ov) hml += ov;
+				hml += tab+'</'+obj.name+'>'+nl;
+			}else if(ov != null){
+				hml += '>'+ov+'</'+obj.name+'>'+nl;
+			}else{
+				hml += '/>'+nl;
+			}
+			return hml;
+		};
+		return toHML(this, '', verbose? '\n': '');
+	}
+	
+	public add(elem: HWPNode){
+		this.children.push(elem);
+		this.setCount();
+	}
+	
+	public setAttrWithFilter(attrs: object, filter: Function){
+		filter = filter.bind(attrs);
+		for(var name in attrs){
+			if(name[0] == '_' || typeof attrs[name] == 'object') continue;
+			if(filter(name)) _setAttr(this, name, attrs[name]);
+		}
+	}
+	
+	public setAttr(attrs: object, list: string[]){
+		if(list) {
+			list.forEach((name) => {
+				_setAttr(this, name, attrs[name]);
+			});
+		} else {
+			for(let name in attrs) {
+				if(name[0] == '_' || typeof attrs[name] == 'object') continue;
+				_setAttr(this, name, attrs[name]);
+			}
+		}
+	}
+	
+	public setCount(){
+		if('Count' in this.attr) this.attr['Count'] = this.children.length;
+	};
+	
+	public getChild(name: string){
+		name = name.toUpperCase();
+		for(var i=0;i<this.children.length;i++){
+			if(this.children[i].name === name) return this.children[i];
+		}
+		var o = new root.node[name]();
+		this.add(o); return o;
+	};
+
+	public go(name: string) {
+		name = name.toUpperCase();
+		for(let i=0;i<this.children.length;i++){
+			if(this.children[i].name === name) return this.children[i];
+		}
+		return null;
+	}
+	
+	public findChild(name: string){
+		return this.go(name);
+	}
+	
+	public findChildren(name: string){
+		name = name.toUpperCase();
+		return this.children.filter((o) => {return o.name === name;});
+	};
+	
+	public getChildWith(name: string, attr_name: string, attr_val: any) {
+		name = name.toUpperCase();
+		for(let i = 0; i < this.children.length; i++) {
+			if(this.children[i].name === name && this.children[i].attr[attr_name] === attr_val) return this.children[i];
+		}
+
+		const o = createHWPNode(name);
+		o.attr[attr_name] = attr_val;
+		return o;
+		/* TO DO
+		var o = new root.node[name]();
+		o.attr[attr_name] = attr_val;
+		this.add(o); return o;
+		*/
+	}
+	
+	public findChildWith(name: string, attr_name: string, attr_val: any){
+		name = name.toUpperCase();
+		for(let i = 0; i < this.children.length; i++) {
+			if(this.children[i].name === name && this.children[i].attr[attr_name] === attr_val) return this.children[i];
+		}
+		return null;
+	};
 }
 
-export class HWPML implements INode {
-	public name = "HWPML";
-	public attr={Version: "2.8", SubVersion: "8.0.0.0", Style: "embed"};
-	public children=[];
+/* TO DO
+for(var name in root.node){
+	root.node[name].prototype = new HWPNode();
 }
-// 4. 헤더 엘리먼트
+*/
+
+export function createHWPNode(name : string) {
+	const attr: any = {};
+	let encoding: string|undefined = undefined;
+	switch(name) {
+		case 'HWPML':
+			attr.Version = '2.8';
+			attr.SubVersion = '8.0.0.0';
+			attr.Style = 'embed';
+			break;
+		case 'HEAD':
+
+		case 'DOCSUMMARY':
+
+			break;
+		default:
+
+	}
+
+	return new HWPNode(name, attr, encoding);
+}
+/*
+
 root.node.HEAD=function Node_HEAD(){
 	this.name="HEAD";this.attr={};this.children=[];
 	this.attr.SecCnt=null;
@@ -1345,3 +1531,4 @@ root.node.LAYOUTCOMPATIBILITY=function Node_LAYOUTCOMPATIBILITY(){
 	this.attr.DoNotFormattingAtBeneathAnchor="false";
 	this.attr.DoNotApplyExtensionCharCompose="false";
 };
+*/
