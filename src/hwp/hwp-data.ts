@@ -89,57 +89,58 @@ const enumArg = {
 	},
 };
 
-
-root.tag.BEGIN = 16;
-root.tag.DOCUMENT_PROPERTIES = 16;
-root.tag.ID_MAPPINGS = 17;
-root.tag.BIN_DATA = 18;
-root.tag.FACE_NAME = 19;
-root.tag.BORDER_FILL = 20;
-root.tag.CHAR_SHAPE = 21;
-root.tag.TAB_DEF = 22;
-root.tag.NUMBERING = 23;
-root.tag.BULLET = 24;
-root.tag.PARA_SHAPE = 25;
-root.tag.STYLE = 26;
-root.tag.DOC_DATA = 27;
-root.tag.DISTRIBUTE_DOC_DATA = 28;
-// 13: Reserved
-root.tag.COMPATIBLE_DOCUMENT = 30;
-root.tag.LAYOUT_COMPATIBILITY = 31;
-root.tag.FORBIDDEN_CHAR = 94;
-root.tag.PARA_HEADER = 66;
-root.tag.PARA_TEXT = 67;
-root.tag.PARA_CHAR_SHAPE = 68;
-root.tag.PARA_LINE_SEG = 69;
-root.tag.PARA_RANGE_TAG = 70;
-root.tag.CTRL_HEADER = 71;
-root.tag.LIST_HEADER = 72;
-root.tag.PAGE_DEF = 73;
-root.tag.FOOTNOTE_SHAPE = 74;
-root.tag.PAGE_BORDER_FILL = 75;
-root.tag.SHAPE_COMPONENT = 76;
-root.tag.TABLE = 77;
-root.tag.SHAPE_COMPONENT_LINE = 78;
-root.tag.SHAPE_COMPONENT_RECTANGLE = 79;
-root.tag.SHAPE_COMPONENT_ELLIPSE = 80;
-root.tag.SHAPE_COMPONENT_ARC = 81;
-root.tag.SHAPE_COMPONENT_POLYGON = 82;
-root.tag.SHAPE_COMPONENT_CURVE = 83;
-root.tag.SHAPE_COMPONENT_OLE = 84;
-root.tag.SHAPE_COMPONENT_PICTURE = 85;
-root.tag.SHAPE_COMPONENT_CONTAINER = 86;
-root.tag.CTRL_DATA = 87;
-root.tag.EQEDIT = 88;
-// 73: Reserved
-root.tag.SHAPE_COMPONENT_TEXTART = 90;
-root.tag.FORM_OBJECT = 91;
-root.tag.MEMO_SHAPE = 92;
-root.tag.MEMO_LIST = 93;
-root.tag.CHART_DATA = 95;
-root.tag.SHAPE_COMPONENT_UNKNOWN = 115;
-// 4.1.1. 문서 속성
-
-root.tag.table = [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"DOCUMENT_PROPERTIES","ID_MAPPINGS","BIN_DATA","FACE_NAME","BORDER_FILL","CHAR_SHAPE","TAB_DEF","NUMBERING","BULLET","PARA_SHAPE","STYLE","DOC_DATA","DISTRIBUTE_DOC_DATA",null,"COMPATIBLE_DOCUMENT","LAYOUT_COMPATIBILITY",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"PARA_HEADER","PARA_TEXT","PARA_CHAR_SHAPE","PARA_LINE_SEG","PARA_RANGE_TAG","CTRL_HEADER","LIST_HEADER","PAGE_DEF","FOOTNOTE_SHAPE","PAGE_BORDER_FILL","SHAPE_COMPONENT","TABLE","SHAPE_COMPONENT_LINE","SHAPE_COMPONENT_RECTANGLE","SHAPE_COMPONENT_ELLIPSE","SHAPE_COMPONENT_ARC","SHAPE_COMPONENT_POLYGON","SHAPE_COMPONENT_CURVE","SHAPE_COMPONENT_OLE","SHAPE_COMPONENT_PICTURE","SHAPE_COMPONENT_CONTAINER","CTRL_DATA","EQEDIT",null,"SHAPE_COMPONENT_TEXTART","FORM_OBJECT","MEMO_SHAPE","MEMO_LIST","FORBIDDEN_CHAR","CHART_DATA",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"SHAPE_COMPONENT_UNKNOWN"];
-
-
+const tag = {
+    BEGIN: 16,
+    DOCUMENT_PROPERTIES: 16,
+    ID_MAPPINGS: 17,
+    BIN_DATA: 18,
+    FACE_NAME: 19,
+    BORDER_FILL: 20,
+    CHAR_SHAPE: 21,
+    TAB_DEF: 22,
+    NUMBERING: 23,
+    BULLET: 24,
+    PARA_SHAPE: 25,
+    STYLE: 26,
+    DOC_DATA: 27,
+    DISTRIBUTE_DOC_DATA: 28,
+    // 13: Reserved
+    COMPATIBLE_DOCUMENT: 30,
+    LAYOUT_COMPATIBILITY: 31,
+    FORBIDDEN_CHAR: 94,
+    PARA_HEADER: 66,
+    PARA_TEXT: 67,
+    PARA_CHAR_SHAPE: 68,
+    PARA_LINE_SEG: 69,
+    PARA_RANGE_TAG: 70,
+    CTRL_HEADER: 71,
+    LIST_HEADER: 72,
+    PAGE_DEF: 73,
+    FOOTNOTE_SHAPE: 74,
+    PAGE_BORDER_FILL: 75,
+    SHAPE_COMPONENT: 76,
+    TABLE: 77,
+    SHAPE_COMPONENT_LINE: 78,
+    SHAPE_COMPONENT_RECTANGLE: 79,
+    SHAPE_COMPONENT_ELLIPSE: 80,
+    SHAPE_COMPONENT_ARC: 81,
+    SHAPE_COMPONENT_POLYGON: 82,
+    SHAPE_COMPONENT_CURVE: 83,
+    SHAPE_COMPONENT_OLE: 84,
+    SHAPE_COMPONENT_PICTURE: 85,
+    SHAPE_COMPONENT_CONTAINER: 86,
+    CTRL_DATA: 87,
+    EQEDIT: 88,
+    // 73: Reserved
+    SHAPE_COMPONENT_TEXTART: 90,
+    FORM_OBJECT: 91,
+    MEMO_SHAPE: 92,
+    MEMO_LIST: 93,
+    CHART_DATA: 95,
+    SHAPE_COMPONENT_UNKNOWN: 115,
+    // 4.1.1. 문서 속성
+    
+    table: [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"DOCUMENT_PROPERTIES","ID_MAPPINGS","BIN_DATA","FACE_NAME","BORDER_FILL","CHAR_SHAPE","TAB_DEF","NUMBERING","BULLET","PARA_SHAPE","STYLE","DOC_DATA","DISTRIBUTE_DOC_DATA",null,"COMPATIBLE_DOCUMENT","LAYOUT_COMPATIBILITY",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"PARA_HEADER","PARA_TEXT","PARA_CHAR_SHAPE","PARA_LINE_SEG","PARA_RANGE_TAG","CTRL_HEADER","LIST_HEADER","PAGE_DEF","FOOTNOTE_SHAPE","PAGE_BORDER_FILL","SHAPE_COMPONENT","TABLE","SHAPE_COMPONENT_LINE","SHAPE_COMPONENT_RECTANGLE","SHAPE_COMPONENT_ELLIPSE","SHAPE_COMPONENT_ARC","SHAPE_COMPONENT_POLYGON","SHAPE_COMPONENT_CURVE","SHAPE_COMPONENT_OLE","SHAPE_COMPONENT_PICTURE","SHAPE_COMPONENT_CONTAINER","CTRL_DATA","EQEDIT",null,"SHAPE_COMPONENT_TEXTART","FORM_OBJECT","MEMO_SHAPE","MEMO_LIST","FORBIDDEN_CHAR","CHART_DATA",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"SHAPE_COMPONENT_UNKNOWN"],
+    
+    }
+    
