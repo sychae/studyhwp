@@ -11,9 +11,9 @@
   "devDependencies": {
     "@types/event-stream": "^3.3.34",
     "@types/node": "^12.6.8",
-    "ts-loader": "^6.0.4",
+    "ts-loader": "^9.4.2",
     "ts-node": "^8.3.0",
-    "tsconfig-paths": "^3.7.0",
+    "tsconfig-paths": "^3.10.1",
     "tslint": "^5.11.0",
     "typescript": "^3.2.2"
   }
